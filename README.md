@@ -72,3 +72,10 @@ kubectl logs -f <pod name>
 Based on src: 
 - https://github.com/kubernetes/contrib/tree/master/statefulsets/zookeeper 
 - https://github.com/kubernetes/contrib/tree/master/statefulsets/kafka
+
+## Uninstall / Remove / Delete
+Delete the entire deployment, including persistant data. **careful**
+
+```
+./delete.sh
+```
