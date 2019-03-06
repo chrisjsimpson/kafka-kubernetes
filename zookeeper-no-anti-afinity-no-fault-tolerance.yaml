@@ -20,7 +20,7 @@ kind: ConfigMap
 metadata:
   name: zk-cm
 data:
-  jvm.heap: "1G"
+  jvm.heap: "500m"
   tick: "2000"
   init: "10"
   sync: "5"
@@ -46,7 +46,7 @@ spec:
         image: gcr.io/google_samples/k8szk:v3
         resources:
           requests:
-            memory: "2Gi"
+            memory: "1Gi"
             cpu: "500m"
         ports:
         - containerPort: 2181
