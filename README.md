@@ -10,7 +10,7 @@ To fudge this locally, you may use `zookeeper-no-anti-afinity-no-fault-tolerance
 
 Do not use in production. Provides no fault tolerance:
 ```
-  kubectl apply -f zookeeper-no-anti-afinity-no-fault-tolerance.yaml
+kubectl apply -f zookeeper-no-anti-afinity-no-fault-tolerance.yaml
 ```
 
 Watch/monitor pod creation as it happens:
@@ -19,6 +19,14 @@ Watch/monitor pod creation as it happens:
 kubectl get -w pods -l app=zk # The -l means only show pods with the label app and equal to zk
 
 ```
+You should see:
+```
+NAME   READY   STATUS              RESTARTS   AGE
+zk-0   0/1     ContainerCreating   0          36h
+zk-0   0/1   Running   0     36h
+zk-0   1/1   Running   0     36h
+```
+If not see debugging & help below.
 
 ### Verify
 
@@ -32,14 +40,17 @@ Output should include: `Created /hello`
 Get the object back out:
 
 ```
-kubectl exec zk-1 zkCli.sh get /hello
+kubectl exec zk-0 zkCli.sh get /hello
 ```
 Output should include: `world` and `dataLength = 5`
+**Note:** This isn't testing replication if your replicas are set to 1, also
+to properly test, put an object in instance `zk-0` and then try to `GET` it from
+`zk-1` or `zk-2` to verify.
 
 ### 2 Start Kafka
 
 
-## Debugging fun
+#### Debugging fun
 
 
 If a pod creation is failing (e.g. crashloop back off) then look deeper:
