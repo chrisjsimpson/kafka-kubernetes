@@ -2,7 +2,7 @@
 
 ## Locally
 
-## Start Zookeeper
+## 1. Start Zookeeper
 
 If you run on a single node (e.g. locally; **don't** do this in production) with replicas > 1 then your deployment will fail. Why? Because your zookeeper pods won't be able to bind to their listen port (2181) because it'll already be in use. 
 
@@ -47,7 +47,7 @@ Output should include: `world` and `dataLength = 5`
 to properly test, put an object in instance `zk-0` and then try to `GET` it from
 `zk-1` or `zk-2` to verify.
 
-## 2 Start Kafka
+## 2. Start Kafka
 
 ```
 kubectl apply -f kafka-no-anti-affinity.yaml
