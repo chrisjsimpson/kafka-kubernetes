@@ -2,6 +2,12 @@
 
 ## Locally
 
+For running kubernetes locally and getting the `kubectl` utlity, you have at least two choices:
+
+- microk8s: Great for ubuntu/debian based: Install https://microk8s.io/docs/ 🐧
+- minikube: https://kubernetes.io/docs/tasks/tools/install-minikube/ ⚙️
+- Otherwise, use a cloud kubernetes provider (Google Cloud, OpenShift etc) 💰
+
 ## 1. Start Zookeeper
 
 If you run on a single node (e.g. locally; **don't** do this in production) with replicas > 1 then your deployment will fail. Why? Because your zookeeper pods won't be able to bind to their listen port (2181) because it'll already be in use. 
