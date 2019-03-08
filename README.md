@@ -13,11 +13,27 @@ this, the replicas need to be > 1.
 
 ## Locally
 
-For running kubernetes locally and getting the `kubectl` utlity, you have at least two choices:
+For running kubernetes locally and getting the `kubectl` utlity, you have at 
+least two choices:
 
 - microk8s: Great for ubuntu/debian based: Install https://microk8s.io/docs/ 🐧
 - minikube: https://kubernetes.io/docs/tasks/tools/install-minikube/ ⚙️
 - Otherwise, use a cloud kubernetes provider (Google Cloud, OpenShift etc) 💰
+
+#### Laptop out of Memory / Disk Requirements
+
+By default, minikube does not give your kubernetes node much memory, so 
+kubernetes might complain about running out of memory, yet your laptop has lots. 
+
+You may need to increase it to whatever your laptop has. e.g. If you have 12Gb 
+machine, to allocate 6Gb:
+
+```
+minikube stop
+minikube delete # You must delete the minikube node vm for changes to take effect 
+minikube --memory 6000 start #Gives your kubernetes node 6gb of ram
+```
+See [https://github.com/kubernetes/minikube/issues/567](issue 567) for reference.
 
 ## 1. Start Zookeeper
 
