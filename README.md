@@ -1,5 +1,16 @@
 # kafka-kubernetes
 
+## What is this?
+
+Run kafka locally on your machine inside kubernetes. The same concept can be used to run in a production enviroment, but to do 
+this, the replicas need to be > 1.
+
+***Tldr; This can be used as a reference for a production running kafka-inside-kubernetes deployment.***
+
+- Contains Zookeeper manifest (because kafka requires Zookeeper)
+- Contains Kafka manifest
+- Complete step-by-step and how to verify installation
+
 ## Locally
 
 For running kubernetes locally and getting the `kubectl` utlity, you have at least two choices:
