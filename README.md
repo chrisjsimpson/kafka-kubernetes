@@ -2,7 +2,7 @@
 
 ## Locally
 
-### Start Zookeeper
+## Start Zookeeper
 
 If you run on a single node (e.g. locally; **don't** do this in production) with replicas > 1 then your deployment will fail. Why? Because your zookeeper pods won't be able to bind to their listen port (2181) because it'll already be in use. 
 
@@ -28,7 +28,7 @@ zk-0   1/1   Running   0     36h
 ```
 If not see debugging & help below.
 
-### Verify
+### Verify Zookeeper 
 
 Put an object in zookeeper and then get it back out to verify:
 
@@ -47,8 +47,55 @@ Output should include: `world` and `dataLength = 5`
 to properly test, put an object in instance `zk-0` and then try to `GET` it from
 `zk-1` or `zk-2` to verify.
 
-### 2 Start Kafka
+## 2 Start Kafka
 
+```
+kubectl apply -f kafka-no-anti-affinity.yaml
+kubectl get -w pods # wait for kafka-0 to be READY 1/1 (then Ctrl+C to stop watching)
+```
+
+### Verify Kafka 
+
+To verify it's working, we are going to:
+
+- Create a topic on kafka-0 called `test`
+- Listen for messages on that topic using `kafka-console-consumer.sh`
+- Send a message (`hello`) to the topic called `test` using `kafka-console-producer.sh`
+- Verify we see the message read from the topic
+
+First create a topic on the kafka service to verify it's working:
+
+```
+kubectl exec -it kafka-0 -- bash # exec into Kafa 0
+kafka-topics.sh --create --topic test --zookeeper zk-0.zk-svc.default.svc.cluster.local:2181 --partitions 1 --replication-factor 1 # create topic
+```
+Expected output:
+```
+Created topic "test".
+```
+Note that we have **no** replication here because we only have a minimal one-node instance for locall testing. See `kafka.yaml` for a redundant prod deployment example.
+
+#### Listen for topics on the `test` topic
+Register a consumer to listen for messages sent to the `test` topic:
+
+```
+kubectl exec -it kafka-0 -- bash # exec into Kafa 0 # exec into kafka-0 if not already there
+kafka-console-consumer.sh --topic test --bootstrap-server localhost:9093 #listen for messages # Keep terminal open
+```
+
+Finally in yet *another* terminal, send a message to the topic:
+
+```
+kubectl exec -it kafka-0 -- bash # exec into Kafa 0
+kafka-console-producer.sh --topic test --broker-list localhost:9093
+hello #Write 'hello' or any message you want
+```
+
+On yout consumer terminal, the expected output:
+```
+hello
+```
+Every message you type and press <Enter> to the producer, will appear on the consumer. See Help/Debugging fun if that's not happening. 
 
 #### Debugging fun
 
@@ -74,8 +121,21 @@ Based on src:
 - https://github.com/kubernetes/contrib/tree/master/statefulsets/kafka
 
 ## Uninstall / Remove / Delete
-Delete the entire deployment, including persistant data. **careful**
+Delete the entire deployment **careful**. 
 
 ```
-./delete.sh
+./delete-zookeeper.sh # Removes zookeeper
+./delete-kafka.sh # Removes kafka
+```
+Note, deleting persistant data must be done manually (for your own safety!). 
+e.g:
+```
+kubectl get pv # list persistant volumes
+kubectl delete pv <pv name>
+```
+Note you can't delete a persistant volume if there are claims against it. To see 
+those: 
+```
+kubectl get pvc # list persistant volume claims
+kubectl delete pvc <name> # delete a persistant volume claim
 ```
